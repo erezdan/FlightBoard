@@ -1,0 +1,41 @@
+{
+    "name": "Flight",
+    "type": "object",
+    "properties": {
+      "flight_number": {
+        "type": "string",
+        "description": "Flight identifier (e.g., AA123)"
+      },
+      "destination": {
+        "type": "string",
+        "description": "Destination city or airport code"
+      },
+      "departure_time": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Scheduled departure date and time"
+      },
+      "gate": {
+        "type": "string",
+        "description": "Gate number or identifier"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "scheduled",
+          "boarding",
+          "departed",
+          "delayed",
+          "cancelled"
+        ],
+        "default": "scheduled",
+        "description": "Current flight status"
+      }
+    },
+    "required": [
+      "flight_number",
+      "destination",
+      "departure_time",
+      "gate"
+    ]
+  }
