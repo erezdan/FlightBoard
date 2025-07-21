@@ -1,0 +1,38 @@
+@FlightBoard.API_HostAddress = http://localhost:5106
+
+### Get all flights
+GET {{FlightBoard.API_HostAddress}}/api/flights
+Accept: application/json
+
+###
+
+### Add new flight
+POST {{FlightBoard.API_HostAddress}}/api/flights
+Content-Type: application/json
+
+{
+  "flightNumber": "LY123",
+  "destination": "New York",
+  "departureTime": "2025-08-30T16:00:00Z",
+  "gate": "A12"
+}
+
+###
+
+### Delete flight by ID
+DELETE {{FlightBoard.API_HostAddress}}/api/flights/1
+Accept: application/json
+
+###
+
+### Search flights (status and destination - optional)
+GET {{FlightBoard.API_HostAddress}}/api/flights/search?status=Scheduled&destination=New York
+Accept: application/json
+
+###
+
+### Clear filters (get all again)
+GET {{FlightBoard.API_HostAddress}}/api/flights/search
+Accept: application/json
+
+###

@@ -1,0 +1,40 @@
+﻿## Build results
+bin/
+obj/
+*.user
+*.rsuser
+*.suo
+*.cache
+*.dbmdl
+*.log
+
+## Visual Studio
+.vs/
+.vscode/
+
+## ASP.NET Core
+appsettings.Development.json
+appsettings.*.json
+secrets.json
+
+## Database
+*.db
+*.sqlite
+
+## Rider
+.idea/
+
+## Logs
+logs/
+*.log
+
+## User-specific
+*.swp
+*.userprefs
+*.orig
+
+## EF Core Migrations files if not tracked
+Migrations/
+
+## Optional: ignore test result files
+TestResults/
