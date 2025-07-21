@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import Flight from "../Entities/Flight.json";
+import React, { useMemo, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Plus, Plane } from "lucide-react";
 import { motion } from "framer-motion";
@@ -8,90 +7,118 @@ import FlightFilters from "../components/FlightFilters";
 import FlightGrid from "../components/FlightGrid";
 import AddFlightModal from "../components/AddFlightModal";
 import Toast, { ToastData } from "../components/Toast";
-import { Flight as FlightType } from "../components/FlightCard";
+
+import { useFlights, useAddFlight, useDeleteFlight } from "../features/flights/useFlights";
+import { Flight } from "../features/flights/types";
+
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../app/store";
+import {
+  setStatus,
+  setDestination,
+  resetFilters,
+} from "../features/flights/flightsUiSlice";
 
 const Home: React.FC = () => {
-  const [flights, setFlights] = useState<FlightType[]>([]);
-  const [filteredFlights, setFilteredFlights] = useState<FlightType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const dispatch = useDispatch();
+
+  // Server data (flights) and loading state via React Query
+  const { data: flights = [], isLoading } = useFlights();
+  const { mutateAsync: addFlight } = useAddFlight();
+  const { mutateAsync: deleteFlight } = useDeleteFlight();
+
+  // UI local state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastData | null>(null);
-  
-  // Filter states
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [destinationFilter, setDestinationFilter] = useState<string>("");
 
-  useEffect(() => {
-    loadFlights();
-  }, []);
+  // Filters from Redux
+  const statusFilter = useSelector((state: RootState) => state.flightsUi.status);
+  const destinationFilter = useSelector((state: RootState) => state.flightsUi.destination);
 
-  useEffect(() => {
-    applyFilters();
-  }, [flights, statusFilter, destinationFilter]);
-
-  const loadFlights = async () => {
-    setIsLoading(true);
-    try {
-      const data = await (Flight as any).list("-departure_time");
-      setFlights(data);
-    } catch (error) {
-      showToast("error", "Failed to load flights", "Please try refreshing the page.");
-    }
-    setIsLoading(false);
+  type FlightFormData = {
+    flight_number: string;
+    destination: string;
+    departure_time: string;
+    gate: string;
+    status: string;
   };
 
-  const applyFilters = () => {
+  // Filtered flights memoized
+  const filteredFlights = useMemo(() => {
     let filtered = flights;
 
     if (statusFilter !== "all") {
-      filtered = filtered.filter(flight => flight.status === statusFilter);
+      filtered = filtered.filter((flight) => flight.status === statusFilter);
     }
 
     if (destinationFilter.trim()) {
-      filtered = filtered.filter(flight => 
+      filtered = filtered.filter((flight) =>
         flight.destination.toLowerCase().includes(destinationFilter.toLowerCase())
       );
     }
 
-    setFilteredFlights(filtered);
-  };
+    return filtered;
+  }, [flights, statusFilter, destinationFilter]);
 
-  const handleAddFlight = async (flightData: any) => {
+  // Add flight via React Query
+  const handleAddFlight = async (formData: FlightFormData) => {
     setIsSubmitting(true);
     try {
-      await (Flight as any).create(flightData);
-      await loadFlights();
+      await addFlight({
+        flight_number: formData.flight_number,
+        destination: formData.destination,
+        departure_time: formData.departure_time,
+        gate: formData.gate,
+        status: formData.status as Flight["status"], // cast to union type
+      });
       setIsModalOpen(false);
-      showToast("success", "Flight added successfully!", `${flightData.flight_number} to ${flightData.destination} has been added.`);
+      showToast(
+        "success",
+        "Flight added successfully!",
+        `${formData.flight_number} to ${formData.destination} has been added.`
+      );
     } catch (error) {
-      showToast("error", "Failed to add flight", "Please check your input and try again.");
+      showToast(
+        "error",
+        "Failed to add flight",
+        "Please check your input and try again."
+      );
     }
     setIsSubmitting(false);
   };
 
-  const handleDeleteFlight = async (flightId: string | number) => {
+  // Delete flight via React Query
+  const handleDeleteFlight = async (id: string | number) => {
     try {
-      await (Flight as any).delete(flightId);
-      await loadFlights();
+      await deleteFlight(Number(id));
       showToast("success", "Flight deleted", "The flight has been removed from the board.");
     } catch (error) {
       showToast("error", "Failed to delete flight", "Please try again.");
     }
   };
 
+  // Trigger filtering and show results info
   const handleSearch = () => {
-    applyFilters();
-    showToast("info", "Filters applied", `Found ${filteredFlights.length} flight${filteredFlights.length !== 1 ? 's' : ''} matching your criteria.`);
+    showToast(
+      "info",
+      "Filters applied",
+      `Found ${filteredFlights.length} flight${filteredFlights.length !== 1 ? "s" : ""} matching your criteria.`
+    );
   };
 
+  // Clear filters to show all
   const handleClearFilters = () => {
-    setStatusFilter("all");
-    setDestinationFilter("");
+    dispatch(resetFilters());
     showToast("info", "Filters cleared", "Showing all flights.");
   };
 
-  const showToast = (type: ToastData["type"], message: string, description: string | null = null) => {
+  // Show toast message
+  const showToast = (
+    type: ToastData["type"],
+    message: string,
+    description: string | null = null
+  ) => {
     setToast({ type, message, description: description || undefined });
   };
 
@@ -112,14 +139,13 @@ const Home: React.FC = () => {
               <h1 className="text-4xl font-bold text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                 Flight Board
               </h1>
-              <p className="text-gray-500 mt-2">Real-time flight management dashboard</p>
+              <p className="text-gray-500 mt-2">
+                Real-time flight management dashboard
+              </p>
             </div>
           </div>
-          
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
+
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               onClick={() => setIsModalOpen(true)}
               className="h-14 px-8 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold text-lg"
@@ -134,8 +160,8 @@ const Home: React.FC = () => {
         <FlightFilters
           statusFilter={statusFilter}
           destinationFilter={destinationFilter}
-          onStatusChange={setStatusFilter}
-          onDestinationChange={setDestinationFilter}
+          onStatusChange={(value) => dispatch(setStatus(value))}
+          onDestinationChange={(value) => dispatch(setDestination(value))}
           onSearch={handleSearch}
           onClear={handleClearFilters}
         />
@@ -150,11 +176,13 @@ const Home: React.FC = () => {
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Active Flights</h2>
               <p className="text-gray-500">
-                {isLoading ? "Loading..." : `Showing ${filteredFlights.length} of ${flights.length} flights`}
+                {isLoading
+                  ? "Loading..."
+                  : `Showing ${filteredFlights.length} of ${flights.length} flights`}
               </p>
             </div>
           </div>
-          
+
           <FlightGrid
             flights={filteredFlights}
             onDeleteFlight={handleDeleteFlight}

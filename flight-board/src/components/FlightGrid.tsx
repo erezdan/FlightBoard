@@ -1,6 +1,7 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import FlightCard, { Flight } from "./FlightCard";
+import FlightCard from "./FlightCard";
+import { Flight } from "../features/flights/types";
 import { Plane, Search } from "lucide-react";
 
 interface FlightGridProps {

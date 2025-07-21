@@ -5,15 +5,7 @@ import { Badge } from "../components/ui/badge";
 import { Trash2, Plane, Clock, MapPin, Hash, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-
-export interface Flight {
-  id: string | number;
-  flight_number: string;
-  destination: string;
-  departure_time: string;
-  gate: string;
-  status: "scheduled" | "boarding" | "departed" | "delayed" | "cancelled";
-}
+import { Flight } from "../features/flights/types";
 
 interface FlightCardProps {
   flight: Flight;
