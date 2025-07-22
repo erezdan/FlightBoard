@@ -36,9 +36,7 @@ export const useFlights = (
     queryKey: ["flights", { status, destination }],
     queryFn: async () => {
       if (!hasFilters) {
-        const response = await fetch(`${API_BASE_URL}/flights`);
-        if (!response.ok) throw new Error("Failed to fetch all flights");
-        return await response.json();
+        return await fetchFlights();
       }
 
       const params = new URLSearchParams();

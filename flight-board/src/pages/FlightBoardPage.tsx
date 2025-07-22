@@ -22,12 +22,9 @@ import {
 const FlightBoardPage: React.FC = () => {
   const dispatch = useDispatch();
 
-  // Filters from Redux
-  const statusFilter = useSelector((state: RootState) => state.flightsUi.status);
-  const destinationFilter = useSelector((state: RootState) => state.flightsUi.destination);
-
   // Server data (flights) and loading state via React Query
-  const { data: flights = [], isLoading } = useFlights(statusFilter, destinationFilter);
+  const [searchParams, setSearchParams] = useState<{ status?: string; destination?: string }>({});
+  const { data: flights = [], isLoading } = useFlights(searchParams.status, searchParams.destination);
   const { mutateAsync: addFlight } = useAddFlight();
   const { mutateAsync: deleteFlight } = useDeleteFlight();
 
@@ -35,6 +32,10 @@ const FlightBoardPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastData | null>(null);
+
+  // Filters from Redux
+  const statusFilter = useSelector((state: RootState) => state.flightsUi.status);
+  const destinationFilter = useSelector((state: RootState) => state.flightsUi.destination);
 
   type FlightFormData = {
     flight_number: string;
@@ -83,6 +84,10 @@ const FlightBoardPage: React.FC = () => {
 
   // Trigger filtering and show results info
   const handleSearch = () => {
+    setSearchParams({
+      status: statusFilter !== "all" ? statusFilter : undefined,
+      destination: destinationFilter.trim() || undefined,
+    });
     showToast(
       "info",
       "Filters applied",
@@ -92,6 +97,7 @@ const FlightBoardPage: React.FC = () => {
 
   // Clear filters to show all
   const handleClearFilters = () => {
+    setSearchParams({});
     dispatch(resetFilters());
     showToast("info", "Filters cleared", "Showing all flights.");
   };
