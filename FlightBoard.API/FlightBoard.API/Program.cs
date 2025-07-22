@@ -2,6 +2,7 @@ using FlightBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using FlightBoard.API.Hubs;
 using System.Text.Json;
+using FlightBoard.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
     });
+builder.Services.AddHostedService<FlightStatusBackgroundService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

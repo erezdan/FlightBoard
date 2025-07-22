@@ -1,15 +1,31 @@
 // src/features/flights/useFlights.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Flight } from "./types";
+import { API_BASE_URL } from "../../config";
 
 const fetchFlights = async (): Promise<Flight[]> => {
-  const response = await fetch("/api/flights");
+  const response = await fetch(`${API_BASE_URL}/flights`);
   if (!response.ok) throw new Error("Failed to fetch flights");
   return await response.json();
 };
 
+export const searchFlights = (status?: string, destination?: string) => {
+  return useQuery<Flight[]>({
+    queryKey: ["flights", "search", { status, destination }],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (status) params.append("status", status);
+      if (destination) params.append("destination", destination);
+
+      const response = await fetch(`${API_BASE_URL}/flights/search?${params}`);
+      if (!response.ok) throw new Error("Failed to search flights");
+      return await response.json();
+    },
+  });
+};
+
 const addFlight = async (flight: Omit<Flight, "id">): Promise<Flight> => {
-  const response = await fetch("/api/flights", {
+  const response = await fetch(`${API_BASE_URL}/flights`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(flight),
@@ -19,7 +35,7 @@ const addFlight = async (flight: Omit<Flight, "id">): Promise<Flight> => {
 };
 
 const deleteFlight = async (id: number): Promise<void> => {
-  const response = await fetch(`/api/flights/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/flights/${id}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Failed to delete flight");

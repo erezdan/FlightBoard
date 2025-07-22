@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using FlightBoard.Infrastructure.Persistence;
 using FlightBoard.API.Hubs;
 using FlightBoard.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightBoard.API.Controllers;
 
@@ -21,6 +22,23 @@ public class FlightsController : ControllerBase
 
     [HttpGet]
     public IActionResult GetAll() => Ok(_db.Flights.ToList());
+
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<Flight>>> SearchFlights(
+    [FromQuery] string? status,
+    [FromQuery] string? destination)
+    {
+        var query = _db.Flights.AsQueryable();
+
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(f => f.Status.ToLower() == status.ToLower());
+
+        if (!string.IsNullOrEmpty(destination))
+            query = query.Where(f => f.Destination.ToLower().Contains(destination.ToLower()));
+
+        var result = await query.ToListAsync();
+        return Ok(result);
+    }
 
     [HttpPost]
     public async Task<IActionResult> AddFlight([FromBody] Flight flight)
