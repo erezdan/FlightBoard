@@ -16,24 +16,32 @@ export const initializeSignalRConnection = async () => {
     .configureLogging(LogLevel.Information)
     .build();
 
-  connection.on("FlightAdded", (newFlight: Flight) => {
-    queryClient.setQueryData<Flight[]>(["flights"], (old = []) => [...old, newFlight]);
-  });
+    connection.on("FlightAdded", (newFlight: Flight) => {
+      queryClient.setQueriesData<Flight[]>(
+        { queryKey: ["flights"], type: "all" },
+        (old = []) => [...old, newFlight]
+      );
+    });
 
-  connection.on("FlightDeleted", (id: number) => {
-    queryClient.setQueryData<Flight[]>(["flights"], (old = []) => old.filter(f => f.id !== id));
-  });
+    connection.on("FlightDeleted", (id: number) => {
+      queryClient.setQueriesData<Flight[]>(
+        { queryKey: ["flights"], type: "all" },
+        (old = []) => old.filter((f) => f.id !== id)
+      );
+    });
 
   connection.on("FlightStatusUpdated", (updatedFlight: Flight) => {
-    queryClient.setQueryData<Flight[]>(["flights"], (old = []) =>
-      old.map(f => f.id === updatedFlight.id ? updatedFlight : f)
+    queryClient.setQueriesData<Flight[]>(
+      { queryKey: ["flights"], type: "all" },
+      (old = []) =>
+        old.map((f) => (f.id === updatedFlight.id ? updatedFlight : f))
     );
   });
 
   try {
     await connection.start();
-    console.log("SignalR connection established.");
+    console.log("✅ SignalR connection established.");
   } catch (err) {
-    console.error("SignalR connection failed:", err);
+    console.error("❌ SignalR connection failed:", err);
   }
 };
