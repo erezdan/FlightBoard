@@ -47,6 +47,18 @@ public class FlightsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddFlight([FromBody] Flight flight)
     {
+        if (string.IsNullOrWhiteSpace(flight.FlightNumber))
+            return BadRequest("Flight number is required.");
+
+        if (await _db.Flights.AnyAsync(f => f.FlightNumber == flight.FlightNumber))
+            return Conflict("Flight number must be unique.");
+
+        if (string.IsNullOrWhiteSpace(flight.Destination))
+            return BadRequest("Destination is required.");
+
+        if (string.IsNullOrWhiteSpace(flight.Gate))
+            return BadRequest("Gate is required.");
+
         if (flight.DepartureTime <= DateTime.UtcNow)
             return BadRequest("Departure time must be in the future.");
 
