@@ -27,11 +27,13 @@ public class FlightStatusBackgroundService : BackgroundService
         {
             using var scope = _serviceProvider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<FlightDbContext>();
-
             var now = DateTime.UtcNow;
 
+            // We include flights whose departure time is up to 65 minutes ago,
+            // to ensure we can detect the transition from "Departed" to "Landed".
+            // Also include flights scheduled within the next 24 hours.
             var flights = await db.Flights
-                .Where(f => f.DepartureTime >= now.AddHours(-1) &&
+                .Where(f => f.DepartureTime >= now.AddMinutes(-65) &&
                             f.DepartureTime <= now.AddHours(24))
                 .AsNoTracking()
                 .ToListAsync(stoppingToken);
