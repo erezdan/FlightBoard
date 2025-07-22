@@ -46,3 +46,5 @@ app.MapControllers();
 app.MapHub<FlightHub>("/flightHub");
 
 app.Run();
+
+public partial class Program { }
