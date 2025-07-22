@@ -38,9 +38,9 @@ const FlightBoardPage: React.FC = () => {
   const destinationFilter = useSelector((state: RootState) => state.flightsUi.destination);
 
   type FlightFormData = {
-    flight_number: string;
+    flightNumber: string;
     destination: string;
-    departure_time: string;
+    departureTime: string;
     gate: string;
     status: string;
   };
@@ -50,9 +50,9 @@ const FlightBoardPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       await addFlight({
-        flight_number: formData.flight_number,
+        flightNumber: formData.flightNumber,
         destination: formData.destination,
-        departure_time: formData.departure_time,
+        departureTime: formData.departureTime,
         gate: formData.gate,
         status: formData.status as Flight["status"], // cast to union type
       });
@@ -60,7 +60,7 @@ const FlightBoardPage: React.FC = () => {
       showToast(
         "success",
         "Flight added successfully!",
-        `${formData.flight_number} to ${formData.destination} has been added.`
+        `${formData.flightNumber} to ${formData.destination} has been added.`
       );
     } catch (error) {
       showToast(
@@ -88,18 +88,12 @@ const FlightBoardPage: React.FC = () => {
       status: statusFilter !== "all" ? statusFilter : undefined,
       destination: destinationFilter.trim() || undefined,
     });
-    showToast(
-      "info",
-      "Filters applied",
-      `Found ${flights.length} flight${flights.length !== 1 ? "s" : ""} matching your criteria.`
-    );
   };
 
   // Clear filters to show all
   const handleClearFilters = () => {
     setSearchParams({});
     dispatch(resetFilters());
-    showToast("info", "Filters cleared", "Showing all flights.");
   };
 
   // Show toast message

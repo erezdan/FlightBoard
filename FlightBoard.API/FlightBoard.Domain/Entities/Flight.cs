@@ -13,13 +13,13 @@ namespace FlightBoard.Domain.Entities
         [Column("id")]
         public int Id { get; set; }
 
-        [Column("flight_number")]
+        [Column("flightNumber")]
         public string FlightNumber { get; set; } = string.Empty;
 
         [Column("destination")]
         public string Destination { get; set; } = string.Empty;
 
-        [Column("departure_time")]
+        [Column("departureTime")]
         public DateTime DepartureTime { get; set; }
 
         [Column("gate")]

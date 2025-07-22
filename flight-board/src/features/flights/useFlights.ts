@@ -5,7 +5,9 @@ import { API_BASE_URL } from "../../config";
 
 const fetchFlights = async (): Promise<Flight[]> => {
   const response = await fetch(`${API_BASE_URL}/flights`);
-  if (!response.ok) throw new Error("Failed to fetch flights");
+  if (!response.ok){
+    const errorText = await response.text();
+    throw new Error(errorText || "Failed to fetch flights");}
   return await response.json();
 };
 
@@ -15,7 +17,9 @@ const addFlight = async (flight: Omit<Flight, "id">): Promise<Flight> => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(flight),
   });
-  if (!response.ok) throw new Error("Failed to add flight");
+  if (!response.ok){
+    const errorText = await response.text();
+    throw new Error(errorText || "Failed to add flight");}
   return await response.json();
 };
 
@@ -23,7 +27,10 @@ const deleteFlight = async (id: number): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/flights/${id}`, {
     method: "DELETE",
   });
-  if (!response.ok) throw new Error("Failed to delete flight");
+  if (!response.ok){
+    const errorText = await response.text();
+    throw new Error(errorText || "Failed to delete flight");
+  }
 };
 
 export const useFlights = (

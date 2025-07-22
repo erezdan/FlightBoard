@@ -20,25 +20,25 @@ interface AddFlightModalProps {
 }
 
 interface FlightFormData {
-  flight_number: string;
+  flightNumber: string;
   destination: string;
-  departure_time: string;
+  departureTime: string;
   gate: string;
   status: string;
 }
 
 interface FormErrors {
-  flight_number?: string;
+  flightNumber?: string;
   destination?: string;
-  departure_time?: string;
+  departureTime?: string;
   gate?: string;
 }
 
 export default function AddFlightModal({ isOpen, onClose, onSubmit, isSubmitting }: AddFlightModalProps) {
   const [formData, setFormData] = useState<FlightFormData>({
-    flight_number: "",
+    flightNumber: "",
     destination: "",
-    departure_time: "",
+    departureTime: "",
     gate: "",
     status: "scheduled"
   });
@@ -48,14 +48,14 @@ export default function AddFlightModal({ isOpen, onClose, onSubmit, isSubmitting
   const validateForm = () => {
     const newErrors: FormErrors = {};
     
-    if (!formData.flight_number.trim()) {
-      newErrors.flight_number = "Flight number is required";
+    if (!formData.flightNumber.trim()) {
+      newErrors.flightNumber = "Flight number is required";
     }
     if (!formData.destination.trim()) {
       newErrors.destination = "Destination is required";
     }
-    if (!formData.departure_time) {
-      newErrors.departure_time = "Departure time is required";
+    if (!formData.departureTime) {
+      newErrors.departureTime = "Departure time is required";
     }
     if (!formData.gate.trim()) {
       newErrors.gate = "Gate is required";
@@ -76,9 +76,9 @@ export default function AddFlightModal({ isOpen, onClose, onSubmit, isSubmitting
     
     // Reset form
     setFormData({
-      flight_number: "",
+      flightNumber: "",
       destination: "",
-      departure_time: "",
+      departureTime: "",
       gate: "",
       status: "scheduled"
     });
@@ -116,20 +116,20 @@ export default function AddFlightModal({ isOpen, onClose, onSubmit, isSubmitting
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="flight_number">
+                <Label htmlFor="flightNumber">
                   Flight Number *
                 </Label>
                 <Input
-                  id="flight_number"
+                  id="flightNumber"
                   placeholder="e.g., AA123"
-                  value={formData.flight_number}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange("flight_number", e.target.value)}
+                  value={formData.flightNumber}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange("flightNumber", e.target.value)}
                   className={`h-11 rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.flight_number ? "border-red-300 bg-red-50" : ""
+                    errors.flightNumber ? "border-red-300 bg-red-50" : ""
                   }`}
                 />
                 <AnimatePresence>
-                  {errors.flight_number && (
+                  {errors.flightNumber && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -137,7 +137,7 @@ export default function AddFlightModal({ isOpen, onClose, onSubmit, isSubmitting
                       className="flex items-center gap-1 text-red-600 text-xs"
                     >
                       <AlertCircle className="w-3 h-3" />
-                      {errors.flight_number}
+                      {errors.flightNumber}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -173,23 +173,23 @@ export default function AddFlightModal({ isOpen, onClose, onSubmit, isSubmitting
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="departure_time">
+              <Label htmlFor="departureTime">
                 Departure Time *
               </Label>
               <div className="relative">
                 <Input
-                  id="departure_time"
+                  id="departureTime"
                   type="datetime-local"
-                  value={formData.departure_time}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange("departure_time", e.target.value)}
+                  value={formData.departureTime}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange("departureTime", e.target.value)}
                   className={`h-11 rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-11 ${
-                    errors.departure_time ? "border-red-300 bg-red-50" : ""
+                    errors.departureTime ? "border-red-300 bg-red-50" : ""
                   }`}
                 />
                 <CalendarDays className="w-4 h-4 text-gray-400 absolute left-4 top-3.5" />
               </div>
               <AnimatePresence>
-                {errors.departure_time && (
+                {errors.departureTime && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -197,7 +197,7 @@ export default function AddFlightModal({ isOpen, onClose, onSubmit, isSubmitting
                     className="flex items-center gap-1 text-red-600 text-xs"
                   >
                     <AlertCircle className="w-3 h-3" />
-                    {errors.departure_time}
+                    {errors.departureTime}
                   </motion.div>
                 )}
               </AnimatePresence>

@@ -14,12 +14,7 @@ builder.Services.AddSignalR();
 builder.Services.AddHostedService<FlightStatusBackgroundService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
-    });
+builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {

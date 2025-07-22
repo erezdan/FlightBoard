@@ -51,7 +51,7 @@ export default function FlightCard({ flight, onDelete, index }: FlightCardProps)
   const config = statusConfig[flight.status] || statusConfig.scheduled;
   const StatusIcon = config.icon;
 
-  const departureDate = new Date(flight.departure_time);
+  const departureDate = new Date(flight.departureTime);
   const formattedTime = isValid(departureDate)
     ? format(departureDate, "MMM d, h:mm a")
     : "Invalid date";
@@ -75,7 +75,7 @@ export default function FlightCard({ flight, onDelete, index }: FlightCardProps)
             <div>
               <div className="flex items-center gap-2">
                 <Hash className="w-4 h-4 text-gray-400" />
-                <h3 className="text-xl font-bold text-gray-900">{flight.flight_number}</h3>
+                <h3 className="text-xl font-bold text-gray-900">{flight.flightNumber}</h3>
               </div>
               <div className="flex items-center gap-2 mt-1">
                 <MapPin className="w-4 h-4 text-gray-400" />

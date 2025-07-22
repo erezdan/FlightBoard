@@ -1,8 +1,8 @@
 export interface Flight {
   id: number;
-  flight_number: string;
+  flightNumber: string;
   destination: string;
-  departure_time: string;
+  departureTime: string;
   gate: string;
   status: "scheduled" | "boarding" | "departed" | "delayed" | "cancelled";
 }
