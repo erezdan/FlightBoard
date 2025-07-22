@@ -19,7 +19,7 @@ import {
   resetFilters,
 } from "../features/flights/flightsUiSlice";
 
-const Home: React.FC = () => {
+const FlightBoardPage: React.FC = () => {
   const dispatch = useDispatch();
 
   // Server data (flights) and loading state via React Query
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
   };
 
   // Delete flight via React Query
-  const handleDeleteFlight = async (id: string | number) => {
+  const handleDeleteFlight = async (id: number) => {
     try {
       await deleteFlight(Number(id));
       showToast("success", "Flight deleted", "The flight has been removed from the board.");
@@ -205,4 +205,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default FlightBoardPage;

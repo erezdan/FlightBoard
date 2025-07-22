@@ -9,7 +9,7 @@ import { Flight } from "../features/flights/types";
 
 interface FlightCardProps {
   flight: Flight;
-  onDelete: (id: string | number) => void;
+  onDelete: (id: number) => void;
   index: number;
 }
 

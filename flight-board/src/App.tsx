@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { initializeSignalRConnection } from './services/signalR';
-import Home from './pages/Home';
+import FlightBoardPage from './pages/FlightBoardPage';
 import './App.css';
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div className="App">
-      <Home />
+      <FlightBoardPage />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { Plane, Search } from "lucide-react";
 
 interface FlightGridProps {
   flights: Flight[];
-  onDeleteFlight: (id: string | number) => void;
+  onDeleteFlight: (id: number) => void;
   isLoading: boolean;
 }
 
