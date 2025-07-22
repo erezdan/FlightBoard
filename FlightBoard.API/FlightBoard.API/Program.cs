@@ -1,6 +1,7 @@
 using FlightBoard.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using FlightBoard.API.Hubs;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,11 @@ builder.Services.AddDbContext<FlightDbContext>(options =>
     options.UseSqlite("Data Source=flights.db"));
 
 builder.Services.AddSignalR();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
