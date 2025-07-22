@@ -11,7 +11,7 @@ export const initializeSignalRConnection = async () => {
   if (connection) return; // Prevent duplicate connections
 
   connection = new HubConnectionBuilder()
-    .withUrl("/flightHub") // Make sure the server exposes /flightHub
+    .withUrl("http://localhost:5106/flightHub")
     .withAutomaticReconnect()
     .configureLogging(LogLevel.Information)
     .build();

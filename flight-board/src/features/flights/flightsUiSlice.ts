@@ -10,7 +10,7 @@ interface FlightsUiState {
 const initialState: FlightsUiState = {
   origin: "",
   destination: "",
-  status: ""
+  status: "all"
 };
 
 const flightsUiSlice = createSlice({
@@ -29,7 +29,7 @@ const flightsUiSlice = createSlice({
     resetFilters(state) {
       state.origin = "";
       state.destination = "";
-      state.status = "";
+      state.status = "all";
     }
   }
 });

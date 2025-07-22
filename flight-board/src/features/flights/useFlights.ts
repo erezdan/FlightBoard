@@ -9,21 +9,6 @@ const fetchFlights = async (): Promise<Flight[]> => {
   return await response.json();
 };
 
-export const searchFlights = (status?: string, destination?: string) => {
-  return useQuery<Flight[]>({
-    queryKey: ["flights", "search", { status, destination }],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (status) params.append("status", status);
-      if (destination) params.append("destination", destination);
-
-      const response = await fetch(`${API_BASE_URL}/flights/search?${params}`);
-      if (!response.ok) throw new Error("Failed to search flights");
-      return await response.json();
-    },
-  });
-};
-
 const addFlight = async (flight: Omit<Flight, "id">): Promise<Flight> => {
   const response = await fetch(`${API_BASE_URL}/flights`, {
     method: "POST",
@@ -45,6 +30,21 @@ export const useFlights = () => {
   return useQuery<Flight[]>({
     queryKey: ["flights"],
     queryFn: fetchFlights,
+  });
+};
+
+export const useSearchFlights = (status?: string, destination?: string) => {
+  return useQuery<Flight[]>({
+    queryKey: ["flights", "search", { status, destination }],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (status) params.append("status", status);
+      if (destination) params.append("destination", destination);
+
+      const response = await fetch(`${API_BASE_URL}/flights/search?${params}`);
+      if (!response.ok) throw new Error("Failed to search flights");
+      return await response.json();
+    },
   });
 };
 

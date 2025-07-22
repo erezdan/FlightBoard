@@ -21,7 +21,11 @@ public class FlightsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll() => Ok(_db.Flights.ToList());
+    public async Task<IActionResult> GetAll()
+    {
+        var flights = await _db.Flights.ToListAsync();
+        return Ok(flights);
+    }
 
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<Flight>>> SearchFlights(
