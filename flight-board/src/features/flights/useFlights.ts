@@ -1,5 +1,5 @@
 // src/features/flights/useFlights.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { Flight } from "./types";
 import { API_BASE_URL } from "../../config";
 
@@ -26,25 +26,30 @@ const deleteFlight = async (id: number): Promise<void> => {
   if (!response.ok) throw new Error("Failed to delete flight");
 };
 
-export const useFlights = () => {
-  return useQuery<Flight[]>({
-    queryKey: ["flights"],
-    queryFn: fetchFlights,
-  });
-};
+export const useFlights = (
+  status?: string,
+  destination?: string
+): UseQueryResult<Flight[], Error> => {
+  const hasFilters = !!status || !!destination;
 
-export const useSearchFlights = (status?: string, destination?: string) => {
-  return useQuery<Flight[]>({
-    queryKey: ["flights", "search", { status, destination }],
+  return useQuery<Flight[], Error, Flight[], [string, { status?: string; destination?: string }]>({
+    queryKey: ["flights", { status, destination }],
     queryFn: async () => {
+      if (!hasFilters) {
+        const response = await fetch(`${API_BASE_URL}/flights`);
+        if (!response.ok) throw new Error("Failed to fetch all flights");
+        return await response.json();
+      }
+
       const params = new URLSearchParams();
       if (status) params.append("status", status);
       if (destination) params.append("destination", destination);
 
       const response = await fetch(`${API_BASE_URL}/flights/search?${params}`);
-      if (!response.ok) throw new Error("Failed to search flights");
+      if (!response.ok) throw new Error("Failed to fetch filtered flights");
       return await response.json();
     },
+    placeholderData: (previousData) => previousData,
   });
 };
 

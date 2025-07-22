@@ -21,7 +21,15 @@ export function Select({
       <select
         value={value}
         onChange={(e) => onValueChange?.(e.target.value)}
-        className={`appearance-none w-full bg-gray-900 border border-white/30 text-white px-4 py-2 pr-10 rounded-md text-sm ${className}`}
+        className={`appearance-none w-full
+                    bg-primary text-primary-foreground
+                    hover:bg-primary/90
+                    border border-primary
+                    px-4 py-2 pr-10 rounded-md text-sm
+                    focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
+                    transition-colors
+                    disabled:opacity-50 disabled:pointer-events-none
+                    ${className}`}
       >
         {placeholder && (
           <option value="" disabled hidden>
@@ -30,8 +38,7 @@ export function Select({
         )}
         {children}
       </select>
-
-      {/* חץ SVG בצד ימין */}
+      
       <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
         <svg
           className="w-4 h-4"

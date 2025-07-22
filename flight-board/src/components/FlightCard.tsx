@@ -4,7 +4,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Trash2, Plane, Clock, MapPin, Hash, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { Flight } from "../features/flights/types";
 
 interface FlightCardProps {
@@ -50,6 +50,11 @@ const statusConfig: Record<StatusKey, {
 export default function FlightCard({ flight, onDelete, index }: FlightCardProps) {
   const config = statusConfig[flight.status] || statusConfig.scheduled;
   const StatusIcon = config.icon;
+
+  const departureDate = new Date(flight.departure_time);
+  const formattedTime = isValid(departureDate)
+    ? format(departureDate, "MMM d, h:mm a")
+    : "Invalid date";
 
   return (
     <motion.div
@@ -98,7 +103,7 @@ export default function FlightCard({ flight, onDelete, index }: FlightCardProps)
           <div>
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Departure</p>
             <p className="text-sm font-semibold text-gray-900">
-              {format(new Date(flight.departure_time), "MMM d, h:mm a")}
+              {formattedTime}
             </p>
           </div>
           <div>

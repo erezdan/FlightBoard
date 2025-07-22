@@ -24,7 +24,7 @@ export const initializeSignalRConnection = async () => {
     queryClient.setQueryData<Flight[]>(["flights"], (old = []) => old.filter(f => f.id !== id));
   });
 
-  connection.on("FlightStatusUpdate", (updatedFlight: Flight) => {
+  connection.on("FlightStatusUpdated", (updatedFlight: Flight) => {
     queryClient.setQueryData<Flight[]>(["flights"], (old = []) =>
       old.map(f => f.id === updatedFlight.id ? updatedFlight : f)
     );

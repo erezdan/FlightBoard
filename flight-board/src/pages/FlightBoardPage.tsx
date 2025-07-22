@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Plus, Plane } from "lucide-react";
 import { motion } from "framer-motion";
@@ -22,8 +22,12 @@ import {
 const FlightBoardPage: React.FC = () => {
   const dispatch = useDispatch();
 
+  // Filters from Redux
+  const statusFilter = useSelector((state: RootState) => state.flightsUi.status);
+  const destinationFilter = useSelector((state: RootState) => state.flightsUi.destination);
+
   // Server data (flights) and loading state via React Query
-  const { data: flights = [], isLoading } = useFlights();
+  const { data: flights = [], isLoading } = useFlights(statusFilter, destinationFilter);
   const { mutateAsync: addFlight } = useAddFlight();
   const { mutateAsync: deleteFlight } = useDeleteFlight();
 
@@ -32,10 +36,6 @@ const FlightBoardPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastData | null>(null);
 
-  // Filters from Redux
-  const statusFilter = useSelector((state: RootState) => state.flightsUi.status);
-  const destinationFilter = useSelector((state: RootState) => state.flightsUi.destination);
-
   type FlightFormData = {
     flight_number: string;
     destination: string;
@@ -43,23 +43,6 @@ const FlightBoardPage: React.FC = () => {
     gate: string;
     status: string;
   };
-
-  // Filtered flights memoized
-  const filteredFlights = useMemo(() => {
-    let filtered = flights;
-
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((flight) => flight.status === statusFilter);
-    }
-
-    if (destinationFilter.trim()) {
-      filtered = filtered.filter((flight) =>
-        flight.destination.toLowerCase().includes(destinationFilter.toLowerCase())
-      );
-    }
-
-    return filtered;
-  }, [flights, statusFilter, destinationFilter]);
 
   // Add flight via React Query
   const handleAddFlight = async (formData: FlightFormData) => {
@@ -103,7 +86,7 @@ const FlightBoardPage: React.FC = () => {
     showToast(
       "info",
       "Filters applied",
-      `Found ${filteredFlights.length} flight${filteredFlights.length !== 1 ? "s" : ""} matching your criteria.`
+      `Found ${flights.length} flight${flights.length !== 1 ? "s" : ""} matching your criteria.`
     );
   };
 
@@ -176,15 +159,15 @@ const FlightBoardPage: React.FC = () => {
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Active Flights</h2>
               <p className="text-gray-500">
-                {isLoading
+                {isLoading && flights.length === 0
                   ? "Loading..."
-                  : `Showing ${filteredFlights.length} of ${flights.length} flights`}
+                  : `Showing ${flights.length} of ${flights.length} flights`}
               </p>
             </div>
           </div>
 
           <FlightGrid
-            flights={filteredFlights}
+            flights={flights}
             onDeleteFlight={handleDeleteFlight}
             isLoading={isLoading}
           />
